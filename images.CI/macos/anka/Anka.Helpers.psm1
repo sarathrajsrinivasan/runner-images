@@ -215,7 +215,7 @@ function Wait-AnkaVMSSHService {
         [ValidateNotNullOrEmpty()]
         [string] $VMName,
 
-        [int] $RetryCount = 20,
+        [int] $RetryCount = 200,
         [int] $Seconds = 60
     )
 
