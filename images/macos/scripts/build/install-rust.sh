@@ -19,7 +19,8 @@ echo "Install common tools..."
 rustup component add rustfmt clippy
 
 if is_BigSur || is_Monterey; then
-    cargo install bindgen-cli cbindgen cargo-audit cargo-outdated --version 0.21.0-pre.0
+    cargo install --locked bindgen-cli cbindgen cargo-outdated
+    cargo install cargo-audit --version 0.21.0-pre.0
 fi
 
 echo "Cleanup Cargo registry cached data..."
