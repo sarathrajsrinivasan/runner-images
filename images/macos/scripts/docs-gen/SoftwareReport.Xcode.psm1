@@ -87,19 +87,36 @@ function Build-XcodeTable {
         [hashtable] $xcodeInfo
     )
 
+    # Sorting rules for Xcode versions
     $sortRules = @{
         Expression = { $_.Version }
         Descending = $true
     }
 
+    # Process the Xcode version info and sort it
     $xcodeList = $xcodeInfo.Values | ForEach-Object { $_.VersionInfo } | Sort-Object $sortRules
+
+    # Print the value for debugging purposes
+    Write-Host "Debug: The sorted list of Xcode versions:"
+    foreach ($item in $xcodeList) {
+        Write-Host "Version: $($item.Version), Build: $($item.Build), Path: $($item.Path)"
+    }
+
+    # Return a processed list with version, build, path, and symlink path
     return $xcodeList | ForEach-Object {
-        $defaultPostfix = If ($_.IsDefault) { " (default)" } else { "" }
-        $betaPostfix = If ($_.IsStable) { "" } else { " (beta)" }
-        return [PSCustomObject] @{
+        # Determine the postfixes for default and beta versions
+        $defaultPostfix = if ($_.IsDefault) { " (default)" } else { "" }
+        $betaPostfix = if ($_.IsStable) { "" } else { " (beta)" }
+
+        # Create and return a custom object with the desired properties
+        [PSCustomObject] @{
             "Version" = $_.Version.ToString() + $betaPostfix + $defaultPostfix
             "Build" = $_.Build
             "Path" = $_.Path
+            # Symlink based on the custom logic in Get-XcodeRootPath, using the object itself as input
+            "Symlink" = if ((Get-XcodeRootPath -Version $_) -eq $null) { "Error" } else { Get-XcodeRootPath -Version $_ }
+            # Symlink2 based on the custom logic in Get-XcodeRootPath, using only the version as input
+            "Symlink2" = if ((Get-XcodeRootPath -Version $_.Version) -eq $null) { "Error" } else { Get-XcodeRootPath -Version $_.Version }
         }
     }
 }
