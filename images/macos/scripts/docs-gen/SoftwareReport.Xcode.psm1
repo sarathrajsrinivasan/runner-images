@@ -93,6 +93,10 @@ function Build-XcodeTable {
     }
 
     $xcodeList = $xcodeInfo.Values | ForEach-Object { $_.VersionInfo } | Sort-Object $sortRules
+
+    Write-Host "Debug for internal issue"
+    $xcodeList | ForEach-Object { Write-Host $_ }
+
     return $xcodeList | ForEach-Object {
         $defaultPostfix = If ($_.IsDefault) { " (default)" } else { "" }
         $betaPostfix = If ($_.IsStable) { "" } else { " (beta)" }
