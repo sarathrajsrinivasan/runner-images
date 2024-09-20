@@ -98,6 +98,7 @@ function Build-XcodeTable {
 
     # Print the value for debugging purposes
     Write-Host "Debug: The sorted list of Xcode versions:"
+    $xcodeList | ForEach-Object { Write-Host $_ }
     foreach ($item in $xcodeList) {
         Write-Host "Version: $($item.Version), Build: $($item.Build), Path: $($item.Path)"
     }
