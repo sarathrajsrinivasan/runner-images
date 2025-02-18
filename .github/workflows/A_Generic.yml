@@ -13,15 +13,22 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Temp
-        run: | 
-          pip3 --version
-          python3 --version
-          echo "----------------"
-          which python3
-          which pip3
-          python3 -m pip install --upgrade pip
-          pip3 --version
-          echo "----------------"
-          pip --version
-          python --version
+    - name: Check CPU Load Threshold
+      shell: bash
+      run: |
+        echo "Checking CPU Load..."
+        
+        # Get CPU Load Percentage (User + System Load)
+        cpu_load=$(top -l 1 | awk -F'[:,]' '/CPU usage/ {print $2 + $4}' | tr -d ' ')
+
+        echo "🖥️ Current CPU Load: ${cpu_load}%"
+
+        # Check if CPU load exceeds 90%
+        if (( $(echo "$cpu_load > 90" | bc -l) )); then
+          echo "🚨 High CPU Load Detected! ($cpu_load%) Exceeding 90% threshold."
+          exit 1
+        elif (( $(echo "$cpu_load > 70" | bc -l) )); then
+          echo "⚠️ Warning: CPU Load is High ($cpu_load%)"
+        else
+          echo "✅ CPU Load is Normal ($cpu_load%)"
+        fi
